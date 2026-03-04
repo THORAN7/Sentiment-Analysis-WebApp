@@ -13,3 +13,7 @@ This is a beginner sentiment analysis project built using Python and NLTK VADER.
 1. Install requirements
 2. Run app.py
 
+## Run the Web App
+
+1. pip install -r requirements.txt(Its important download it before u run the code NOOB)
+2. streamlit run web_app.py --(TO run this code u dummy)
