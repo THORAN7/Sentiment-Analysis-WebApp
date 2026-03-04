@@ -27,3 +27,6 @@ if st.button("Analyze"):
         st.metric("Sentiment Score", compound)
     else:
         st.warning("Please enter text first!")
+
+
+# Dont run it as normal program u Noob, Type this in the terminal "streamlit run web_app.py"
