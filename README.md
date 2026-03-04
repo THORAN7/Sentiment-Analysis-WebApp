@@ -1,4 +1,4 @@
-## OYE NOOB its justs a sample
+## OYE NOOB its just a sample 
 
 # Sentiment Analysis Project
 
