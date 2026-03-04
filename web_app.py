@@ -21,7 +21,7 @@ st.set_page_config(page_title="Advanced Sentiment Analyzer", page_icon="📊")
 st.title("📊 Advanced Sentiment & Review Analyzer")
 
 # -----------------------------------
-# SUMMARIZATION FUNCTION (Lightweight)
+# SUMMARIZATION FUNCTION
 # -----------------------------------
 
 def summarize_text(text, num_sentences=3):
@@ -54,6 +54,34 @@ def summarize_text(text, num_sentences=3):
 
 
 # -----------------------------------
+# FUNCTION TO EXTRACT POS/NEG/SUGGESTIONS
+# -----------------------------------
+
+def extract_key_points(text):
+    sentences = sent_tokenize(text)
+
+    positive_points = []
+    negative_points = []
+    suggestions = []
+
+    for sentence in sentences:
+        score = sia.polarity_scores(sentence)['compound']
+
+        if score > 0.4:
+            positive_points.append(sentence)
+
+        elif score < -0.4:
+            negative_points.append(sentence)
+
+        # Detect suggestion keywords
+        if any(word in sentence.lower() for word in
+               ["should", "improve", "could", "needs", "better", "recommend"]):
+            suggestions.append(sentence)
+
+    return positive_points, negative_points, suggestions
+
+
+# -----------------------------------
 # TEXT ANALYSIS SECTION
 # -----------------------------------
 
@@ -81,11 +109,9 @@ if st.button("Analyze Text"):
         st.write("### Overall Sentiment Score")
         st.write(score)
 
-        # Highlight words
         st.write("### Highlighted Text")
         st.markdown(highlight_text(text), unsafe_allow_html=True)
 
-        # Summarization
         if len(text) > 50:
             summary = summarize_text(text)
             st.write("### Summary")
@@ -93,7 +119,7 @@ if st.button("Analyze Text"):
 
 
 # -----------------------------------
-# WEB SCRAPING SECTION
+# WEB SCRAPING SECTION (UPDATED)
 # -----------------------------------
 
 st.header("2️⃣ Analyze Reviews from URL")
@@ -108,21 +134,47 @@ if st.button("Analyze Reviews"):
 
             reviews = soup.find_all("p")
 
-            positive = 0
-            negative = 0
+            positive_count = 0
+            negative_count = 0
 
-            for review in reviews[:20]:  # limit to 20
-                review_text = review.get_text()
+            all_positive_points = []
+            all_negative_points = []
+            all_suggestions = []
+
+            for review in reviews[:20]:
+                review_text = review.get_text().strip()
+
+                if len(review_text) < 30:
+                    continue
+
                 score = sia.polarity_scores(review_text)
 
                 if score['compound'] > 0:
-                    positive += 1
+                    positive_count += 1
                 elif score['compound'] < 0:
-                    negative += 1
+                    negative_count += 1
 
-            st.write("### Review Analysis Result")
-            st.success(f"Positive Reviews: {positive}")
-            st.error(f"Negative Reviews: {negative}")
+                pos, neg, sug = extract_key_points(review_text)
+
+                all_positive_points.extend(pos)
+                all_negative_points.extend(neg)
+                all_suggestions.extend(sug)
+
+            st.write("### 📊 Review Sentiment Summary")
+            st.success(f"Positive Reviews: {positive_count}")
+            st.error(f"Negative Reviews: {negative_count}")
+
+            st.write("### 🟢 Positive Points")
+            for point in all_positive_points[:5]:
+                st.markdown(f"- {point}")
+
+            st.write("### 🔴 Negative Points")
+            for point in all_negative_points[:5]:
+                st.markdown(f"- {point}")
+
+            st.write("### 💡 Suggestions from Reviews")
+            for suggestion in all_suggestions[:5]:
+                st.markdown(f"- {suggestion}")
 
         except:
             st.error("Could not fetch reviews. Website may block scraping.")
