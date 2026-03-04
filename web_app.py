@@ -12,6 +12,7 @@ import heapq
 nltk.download('vader_lexicon')
 nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 sia = SentimentIntensityAnalyzer()
 
