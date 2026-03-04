@@ -2,34 +2,28 @@ import streamlit as st
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
-# Download VADER (first time only)
 nltk.download('vader_lexicon')
-
-# Create analyzer
 sia = SentimentIntensityAnalyzer()
 
-# Web App Title
-st.title("Sentiment Analysis Web App")
+st.set_page_config(page_title="Sentiment Analyzer", page_icon="😊")
 
-# User input
-user_text = st.text_area("Enter your text here:")
+st.title("😊 Sentiment Analysis App")
+st.write("Enter text below to analyze its sentiment.")
 
-# Analyze button
-if st.button("Analyze Sentiment"):
-    if user_text.strip() == "":
-        st.warning("Please enter some text!")
-    else:
-        score = sia.polarity_scores(user_text)
+text = st.text_area("Your Text")
 
-        if score['compound'] > 0:
-            sentiment = "Positive 😊"
-            st.success(f"Sentiment: {sentiment}")
-        elif score['compound'] < 0:
-            sentiment = "Negative 😡"
-            st.error(f"Sentiment: {sentiment}")
+if st.button("Analyze"):
+    if text:
+        score = sia.polarity_scores(text)
+        compound = score['compound']
+
+        if compound > 0:
+            st.success("Positive Sentiment 😊")
+        elif compound < 0:
+            st.error("Negative Sentiment 😡")
         else:
-            sentiment = "Neutral 😐"
-            st.info(f"Sentiment: {sentiment}")
+            st.info("Neutral Sentiment 😐")
 
-        st.write("### Sentiment Score:")
-        st.write(score)
+        st.metric("Sentiment Score", compound)
+    else:
+        st.warning("Please enter text first!")
