@@ -8,7 +8,6 @@ from nltk.corpus import stopwords
 from collections import defaultdict
 import heapq
 import plotly.express as px
-import plotly.graph_objects as go
 import pandas as pd
 
 # ---------------- NLTK SETUP ----------------
@@ -27,19 +26,93 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------- UI STYLE ----------------
+# ---------------- SIDEBAR ----------------
+
+st.sidebar.title("⚙️ Dashboard")
+
+page = st.sidebar.radio(
+    "Navigation",
+    ["📊 Review Analyzer", "👨‍💻 About"]
+)
+
+theme = st.sidebar.toggle("🌙 Dark Mode", value=True)
+
+# ---------------- DARK MODE ----------------
+
+if theme:
+
+    st.markdown("""
+    <style>
+
+    .stApp{
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    }
+
+    section[data-testid="stSidebar"]{
+    background:linear-gradient(180deg,#1f2937,#111827);
+    color:white;
+    }
+
+    textarea, .stTextInput input{
+    background:rgba(255,255,255,0.1)!important;
+    color:white!important;
+    }
+
+    .card{
+    padding:25px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px);
+    box-shadow:0px 8px 25px rgba(0,0,0,0.3);
+    margin-bottom:20px;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+# ---------------- LIGHT MODE ----------------
+
+else:
+
+    st.markdown("""
+    <style>
+
+    .stApp{
+    background:#f5f7fb;
+    color:#111111;
+    }
+
+    section[data-testid="stSidebar"]{
+    background:#ffffff;
+    color:#111111;
+    }
+
+    h1,h2,h3,h4,h5,h6,p,span,label,div{
+    color:#111111 !important;
+    }
+
+    textarea,.stTextInput input{
+    background:#ffffff!important;
+    color:#111111!important;
+    border:1px solid #ddd;
+    }
+
+    .card{
+    padding:25px;
+    border-radius:20px;
+    background:white;
+    box-shadow:0px 8px 25px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+
+# ---------------- COMMON BUTTON STYLE ----------------
 
 st.markdown("""
 <style>
-
-.stApp{
-background: linear-gradient(135deg,#667eea,#764ba2);
-color:white;
-}
-
-section[data-testid="stSidebar"]{
-background:linear-gradient(180deg,#1f2937,#111827);
-}
 
 h1{
 text-align:center;
@@ -54,6 +127,7 @@ border-radius:12px;
 border:none;
 padding:10px 25px;
 font-weight:600;
+transition:0.3s;
 }
 
 .stButton>button:hover{
@@ -61,287 +135,270 @@ background:linear-gradient(135deg,#ff7e5f,#feb47b);
 transform:scale(1.05);
 }
 
-textarea{
-background:rgba(255,255,255,0.1)!important;
-color:white!important;
-border-radius:10px!important;
-}
-
-.stTextInput input{
-background:rgba(255,255,255,0.1);
-color:white;
-border-radius:10px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- TITLE ----------------
+# =====================================================
+# PAGE 1 : MAIN REVIEW ANALYZER
+# =====================================================
 
-st.title("📊 AI Product Review Intelligence Dashboard")
-st.divider()
+if page == "📊 Review Analyzer":
 
-# ---------------- SENTIMENT GAUGE FUNCTION ----------------
+    st.title("🤖 AI Product Review Intelligence Dashboard")
+    st.caption("Advanced NLP-powered review analytics platform")
+    st.divider()
 
-def sentiment_gauge(score):
+# ---------------- TEXT SUMMARIZATION ----------------
 
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=score,
-        title={'text': "Sentiment Score"},
-        gauge={
-            'axis': {'range': [-1,1]},
-            'bar': {'color': "#00c6ff"},
-            'steps': [
-                {'range': [-1,-0.3], 'color': "#ff4b4b"},
-                {'range': [-0.3,0.3], 'color': "#f1c40f"},
-                {'range': [0.3,1], 'color': "#2ecc71"}
-            ]
-        }
-    ))
+    def summarize_text(text, num_sentences=3):
 
-    fig.update_layout(height=350)
+        stop_words = set(stopwords.words("english"))
+        words = word_tokenize(text.lower())
 
-    return fig
+        freq = defaultdict(int)
 
+        for word in words:
+            if word not in stop_words:
+                freq[word] += 1
 
-# ---------------- SUMMARIZATION FUNCTION ----------------
+        sentences = sent_tokenize(text)
+        sentence_scores = {}
 
-def summarize_text(text, num_sentences=3):
+        for sentence in sentences:
+            for word in word_tokenize(sentence.lower()):
+                if word in freq:
+                    sentence_scores[sentence] = sentence_scores.get(sentence,0) + freq[word]
 
-    stop_words = set(stopwords.words("english"))
-    words = word_tokenize(text.lower())
+        summary_sentences = heapq.nlargest(
+            num_sentences,
+            sentence_scores,
+            key=sentence_scores.get
+        )
 
-    freq = defaultdict(int)
-
-    for word in words:
-        if word not in stop_words:
-            freq[word] += 1
-
-    sentences = sent_tokenize(text)
-    sentence_scores = {}
-
-    for sentence in sentences:
-        for word in word_tokenize(sentence.lower()):
-            if word in freq:
-                sentence_scores[sentence] = sentence_scores.get(sentence,0) + freq[word]
-
-    summary_sentences = heapq.nlargest(
-        num_sentences,
-        sentence_scores,
-        key=sentence_scores.get
-    )
-
-    return " ".join(summary_sentences)
-
+        return " ".join(summary_sentences)
 
 # ---------------- KEY POINT EXTRACTION ----------------
 
-def extract_key_points(text):
+    def extract_key_points(text):
 
-    sentences = sent_tokenize(text)
+        sentences = sent_tokenize(text)
 
-    positive_points = []
-    negative_points = []
-    suggestions = []
+        positive_points = []
+        negative_points = []
+        suggestions = []
 
-    for sentence in sentences:
+        for sentence in sentences:
 
-        score = sia.polarity_scores(sentence)['compound']
+            score = sia.polarity_scores(sentence)['compound']
 
-        if score > 0.4:
-            positive_points.append(sentence)
+            if score > 0.4:
+                positive_points.append(sentence)
 
-        elif score < -0.4:
-            negative_points.append(sentence)
+            elif score < -0.4:
+                negative_points.append(sentence)
 
-        if any(word in sentence.lower() for word in
-               ["should","improve","could","needs","better","recommend"]):
-            suggestions.append(sentence)
+            if any(word in sentence.lower() for word in
+                   ["should","improve","could","needs","better","recommend"]):
+                suggestions.append(sentence)
 
-    return positive_points, negative_points, suggestions
-
+        return positive_points, negative_points, suggestions
 
 # ---------------- TEXT ANALYZER ----------------
 
-st.header("🧠 Text Sentiment Analyzer")
+    st.header("🧠 Text Sentiment Analyzer")
 
-text = st.text_area("Enter paragraph here")
+    text = st.text_area("Enter paragraph here")
 
-def highlight_text(text):
+    def highlight_text(text):
 
-    words = text.split()
-    highlighted = ""
+        words = text.split()
+        highlighted = ""
 
-    for word in words:
+        for word in words:
 
-        score = sia.polarity_scores(word)['compound']
+            score = sia.polarity_scores(word)['compound']
 
-        if score > 0:
-            highlighted += f"<span style='color:#00ff9d;font-weight:600'>{word}</span> "
+            if score > 0:
+                highlighted += f"<span style='color:#00ff9d;font-weight:600'>{word}</span> "
 
-        elif score < 0:
-            highlighted += f"<span style='color:#ff4b4b;font-weight:600'>{word}</span> "
+            elif score < 0:
+                highlighted += f"<span style='color:#ff4b4b;font-weight:600'>{word}</span> "
 
-        else:
-            highlighted += word + " "
+            else:
+                highlighted += word + " "
 
-    return highlighted
+        return highlighted
 
+    if st.button("Analyze Text") and text:
 
-if st.button("Analyze Text") and text:
+        score = sia.polarity_scores(text)
 
-    score = sia.polarity_scores(text)
+        col1, col2 = st.columns(2)
 
-    col1, col2 = st.columns(2)
+        with col1:
 
-    with col1:
+            st.subheader("📊 Sentiment Score")
+            st.json(score)
 
-        st.subheader("📊 Sentiment Meter")
+            if score['compound'] > 0:
+                st.success("😊 Positive Sentiment")
 
-        gauge = sentiment_gauge(score['compound'])
-        st.plotly_chart(gauge, use_container_width=True)
+            elif score['compound'] < 0:
+                st.error("😡 Negative Sentiment")
 
-        if score['compound'] > 0:
-            st.success("😊 Positive Sentiment")
+            else:
+                st.info("😐 Neutral Sentiment")
 
-        elif score['compound'] < 0:
-            st.error("😡 Negative Sentiment")
+        with col2:
 
-        else:
-            st.info("😐 Neutral Sentiment")
+            if len(text) > 50:
 
-    with col2:
+                summary = summarize_text(text)
 
-        if len(text) > 50:
+                st.subheader("📝 Summary")
+                st.write(summary)
 
-            summary = summarize_text(text)
-
-            st.subheader("📝 Summary")
-            st.write(summary)
-
-    st.subheader("✨ Highlighted Sentiment Words")
-
-    st.markdown(highlight_text(text), unsafe_allow_html=True)
-
+        st.subheader("✨ Highlighted Sentiment Words")
+        st.markdown(highlight_text(text), unsafe_allow_html=True)
 
 # ---------------- WEBSITE REVIEW ANALYZER ----------------
 
-st.header("🌐 Website Review Analyzer")
+    st.header("🌐 Website Review Analyzer")
 
-url = st.text_input("Paste Product / Website URL")
+    url = st.text_input("Paste Product / Website URL")
 
-if st.button("Analyze Reviews"):
+    if st.button("Analyze Reviews"):
 
-    if url:
+        if url:
 
-        with st.spinner("🤖 AI analyzing reviews..."):
+            with st.spinner("🤖 AI analyzing reviews..."):
 
-            try:
+                try:
 
-                response = requests.get(url)
+                    response = requests.get(url)
+                    soup = BeautifulSoup(response.text, "html.parser")
 
-                soup = BeautifulSoup(response.text, "html.parser")
+                    reviews = soup.find_all("p")
 
-                reviews = soup.find_all("p")
+                    positive_count = 0
+                    negative_count = 0
 
-                positive_count = 0
-                negative_count = 0
+                    all_positive_points = []
+                    all_negative_points = []
+                    all_suggestions = []
 
-                all_positive_points = []
-                all_negative_points = []
-                all_suggestions = []
+                    for review in reviews[:20]:
 
-                progress = st.progress(0)
+                        review_text = review.get_text().strip()
 
-                for i, review in enumerate(reviews[:20]):
+                        if len(review_text) < 30:
+                            continue
 
-                    progress.progress((i+1)/20)
+                        score = sia.polarity_scores(review_text)
 
-                    review_text = review.get_text().strip()
+                        if score['compound'] > 0:
+                            positive_count += 1
 
-                    if len(review_text) < 30:
-                        continue
+                        elif score['compound'] < 0:
+                            negative_count += 1
 
-                    score = sia.polarity_scores(review_text)
+                        pos, neg, sug = extract_key_points(review_text)
 
-                    if score['compound'] > 0:
-                        positive_count += 1
+                        all_positive_points.extend(pos)
+                        all_negative_points.extend(neg)
+                        all_suggestions.extend(sug)
 
-                    elif score['compound'] < 0:
-                        negative_count += 1
+                    st.subheader("📊 Sentiment Dashboard")
 
-                    pos, neg, sug = extract_key_points(review_text)
+                    m1, m2 = st.columns(2)
 
-                    all_positive_points.extend(pos)
-                    all_negative_points.extend(neg)
-                    all_suggestions.extend(sug)
+                    with m1:
+                        st.metric("🟢 Positive Reviews", positive_count)
 
-                st.subheader("📊 Sentiment Dashboard")
+                    with m2:
+                        st.metric("🔴 Negative Reviews", negative_count)
 
-                m1, m2 = st.columns(2)
+                    data = pd.DataFrame({
+                        "Sentiment":["Positive","Negative"],
+                        "Count":[positive_count,negative_count]
+                    })
 
-                with m1:
-                    st.metric("🟢 Positive Reviews", positive_count)
+                    pie = px.pie(
+                        data,
+                        names="Sentiment",
+                        values="Count",
+                        hole=0.45,
+                        title="Review Sentiment Distribution"
+                    )
 
-                with m2:
-                    st.metric("🔴 Negative Reviews", negative_count)
+                    st.plotly_chart(pie, use_container_width=True)
 
-                data = pd.DataFrame({
-                    "Sentiment":["Positive","Negative"],
-                    "Count":[positive_count,negative_count]
-                })
+                    bar = px.bar(
+                        data,
+                        x="Sentiment",
+                        y="Count",
+                        color="Sentiment",
+                        title="Sentiment Comparison"
+                    )
 
-                pie = px.pie(
-                    data,
-                    names="Sentiment",
-                    values="Count",
-                    hole=0.45,
-                    title="Review Sentiment Distribution",
-                    color="Sentiment",
-                    color_discrete_map={
-                        "Positive":"#2ecc71",
-                        "Negative":"#ff4b4b"
-                    }
-                )
+                    st.plotly_chart(bar, use_container_width=True)
 
-                st.plotly_chart(pie, use_container_width=True)
+                    col1, col2 = st.columns(2)
 
-                bar = px.bar(
-                    data,
-                    x="Sentiment",
-                    y="Count",
-                    color="Sentiment",
-                    title="Sentiment Comparison",
-                    color_discrete_map={
-                        "Positive":"#2ecc71",
-                        "Negative":"#ff4b4b"
-                    }
-                )
+                    with col1:
 
-                st.plotly_chart(bar, use_container_width=True)
+                        st.subheader("🟢 Positive Insights")
 
-                col1, col2 = st.columns(2)
+                        for point in all_positive_points[:5]:
+                            st.success(point)
 
-                with col1:
+                    with col2:
 
-                    st.subheader("🟢 Positive Insights")
+                        st.subheader("🔴 Negative Insights")
 
-                    for point in all_positive_points[:5]:
-                        st.success(point)
+                        for point in all_negative_points[:5]:
+                            st.error(point)
 
-                with col2:
+                    st.subheader("💡 Suggestions")
 
-                    st.subheader("🔴 Negative Insights")
+                    for suggestion in all_suggestions[:5]:
+                        st.info(suggestion)
 
-                    for point in all_negative_points[:5]:
-                        st.error(point)
+                except:
+                    st.error("Website blocked scraping or invalid URL.")
 
-                st.subheader("💡 Suggestions")
+# =====================================================
+# PAGE 2 : ABOUT
+# =====================================================
 
-                for suggestion in all_suggestions[:5]:
-                    st.info(suggestion)
+elif page == "👨‍💻 About":
 
-            except:
+    st.title("👨‍💻 About the Developer")
 
-                st.error("Website blocked scraping or invalid URL.")
+    col1, col2 = st.columns([1,2])
+
+    with col1:
+        st.image("assets/profile.jpeg", width=220)
+
+    with col2:
+
+        st.markdown("""
+        ## Noob Nimisha
+
+        **AI / ML Developer**
+
+        Creator of the **AI Product Review Intelligence Dashboard**
+
+        ### Skills
+        • Playing GAMES like NOOB                                                              
+        • Can study until 2 AM                          
+        • Python  
+        • NLP  
+        • Data Visualization  
+        • Machine Learning                
+                                                       
+
+        ### Links
+        GitHub: https://github.com/Nimisha-Anand                                 
+        Linkedin: idk she didnt GAVE
+        """)
