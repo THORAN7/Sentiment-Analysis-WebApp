@@ -183,25 +183,29 @@ if page == "📊 Review Analyzer":
 
         sentences = sent_tokenize(text)
 
-        positive_points = []
-        negative_points = []
-        suggestions = []
+        positive_points = set()
+        negative_points = set()
+        suggestions = set()
 
         for sentence in sentences:
 
             score = sia.polarity_scores(sentence)['compound']
+            clean_sentence = sentence.strip()
 
-            if score > 0.4:
-                positive_points.append(sentence)
+            if len(clean_sentence) < 20:
+                continue
 
-            elif score < -0.4:
-                negative_points.append(sentence)
+            if score > 0.5:
+                positive_points.add(clean_sentence)
 
-            if any(word in sentence.lower() for word in
-                   ["should","improve","could","needs","better","recommend"]):
-                suggestions.append(sentence)
+            elif score < -0.5:
+                negative_points.add(clean_sentence)
 
-        return positive_points, negative_points, suggestions
+            if any(word in clean_sentence.lower() for word in
+                   ["should", "improve", "could", "needs", "better", "recommend", "wish"]):
+                suggestions.add(clean_sentence)
+
+        return list(positive_points), list(negative_points), list(suggestions)
 
 # ---------------- TEXT ANALYZER ----------------
 
@@ -263,6 +267,8 @@ if page == "📊 Review Analyzer":
 
 # ---------------- WEBSITE REVIEW ANALYZER ----------------
 
+    # ---------------- WEBSITE REVIEW ANALYZER ----------------
+
     st.header("🌐 Website Review Analyzer")
 
     url = st.text_input("Paste Product / Website URL")
@@ -275,10 +281,37 @@ if page == "📊 Review Analyzer":
 
                 try:
 
-                    response = requests.get(url)
+                    headers = {
+                        "User-Agent": "Mozilla/5.0"
+                    }
+
+                    response = requests.get(url, headers=headers)
                     soup = BeautifulSoup(response.text, "html.parser")
 
-                    reviews = soup.find_all("p")
+                    # ⭐ BONUS BIG UPGRADE — smarter review scraping
+                    review_elements = soup.find_all(
+                        ["p", "span", "div"],
+                        class_=["review", "comment", "content", "text", "description"]
+                    )
+
+                    paragraph_reviews = soup.find_all("p")
+
+                    reviews = []
+
+                    # Collect reviews from upgraded selectors
+                    for r in review_elements:
+                        text = r.get_text().strip()
+                        if len(text) > 30:
+                            reviews.append(text)
+
+                    # Fallback to paragraph scraping
+                    for r in paragraph_reviews:
+                        text = r.get_text().strip()
+                        if len(text) > 30:
+                            reviews.append(text)
+
+                    # Remove duplicates
+                    unique_reviews = list(set(reviews))
 
                     positive_count = 0
                     negative_count = 0
@@ -287,12 +320,7 @@ if page == "📊 Review Analyzer":
                     all_negative_points = []
                     all_suggestions = []
 
-                    for review in reviews[:20]:
-
-                        review_text = review.get_text().strip()
-
-                        if len(review_text) < 30:
-                            continue
+                    for review_text in unique_reviews[:40]:
 
                         score = sia.polarity_scores(review_text)
 
@@ -304,9 +332,14 @@ if page == "📊 Review Analyzer":
 
                         pos, neg, sug = extract_key_points(review_text)
 
-                        all_positive_points.extend(pos)
-                        all_negative_points.extend(neg)
-                        all_suggestions.extend(sug)
+                        all_positive_points += pos
+                        all_negative_points += neg
+                        all_suggestions += sug
+
+                    # Remove duplicate insights
+                    all_positive_points = list(set(all_positive_points))
+                    all_negative_points = list(set(all_negative_points))
+                    all_suggestions = list(set(all_suggestions))
 
                     st.subheader("📊 Sentiment Dashboard")
 
@@ -319,8 +352,8 @@ if page == "📊 Review Analyzer":
                         st.metric("🔴 Negative Reviews", negative_count)
 
                     data = pd.DataFrame({
-                        "Sentiment":["Positive","Negative"],
-                        "Count":[positive_count,negative_count]
+                        "Sentiment": ["Positive", "Negative"],
+                        "Count": [positive_count, negative_count]
                     })
 
                     pie = px.pie(
