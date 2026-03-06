@@ -9,6 +9,13 @@ from collections import defaultdict
 import heapq
 import plotly.express as px
 import pandas as pd
+import time
+
+# Selenium
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 # ---------------- NLTK SETUP ----------------
 
@@ -25,6 +32,93 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+
+# ---------------- AMAZON SCRAPER ----------------
+
+def convert_to_review_url(url):
+
+    if "/product-reviews/" in url:
+        return url
+
+    if "/dp/" in url:
+        product_id = url.split("/dp/")[1].split("/")[0]
+        return f"https://www.amazon.in/product-reviews/{product_id}"
+
+    if "/gp/product/" in url:
+        product_id = url.split("/gp/product/")[1].split("/")[0]
+        return f"https://www.amazon.in/product-reviews/{product_id}"
+
+    return url
+
+
+def scrape_amazon_reviews(url, max_reviews=100):
+
+    url = convert_to_review_url(url)
+
+    st.write("🔗 Review Page:", url)
+
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=options
+    )
+
+    driver.get(url)
+    time.sleep(3)
+
+    reviews = []
+
+    for page in range(1,6):
+
+        st.write(f"📄 Scraping Page {page}")
+
+        blocks = driver.find_elements(By.CSS_SELECTOR,'[data-hook="review"]')
+
+        for block in blocks:
+
+            try:
+
+                review = block.find_element(
+                    By.CSS_SELECTOR,
+                    '[data-hook="review-body"]'
+                ).text
+
+                if len(review) > 20:
+                    reviews.append(review)
+
+            except:
+                pass
+
+            if len(reviews) >= max_reviews:
+                break
+
+        if len(reviews) >= max_reviews:
+            break
+
+        try:
+
+            next_button = driver.find_element(By.CSS_SELECTOR,"li.a-last a")
+            next_button.click()
+            time.sleep(3)
+
+        except:
+            break
+
+    driver.quit()
+
+    reviews = list(set(reviews))
+
+    st.success(f"✅ Reviews Collected: {len(reviews)}")
+
+    with st.expander("👀 Preview Reviews"):
+        for r in reviews[:5]:
+            st.write("•", r)
+
+    return reviews
+
 
 # ---------------- SIDEBAR ----------------
 
@@ -43,112 +137,38 @@ if theme:
 
     st.markdown("""
     <style>
-
     .stApp{
     background: linear-gradient(135deg,#667eea,#764ba2);
     color:white;
     }
-
     section[data-testid="stSidebar"]{
     background:linear-gradient(180deg,#1f2937,#111827);
     color:white;
     }
-
-    textarea, .stTextInput input{
-    background:rgba(255,255,255,0.1)!important;
-    color:white!important;
-    }
-
-    .card{
-    padding:25px;
-    border-radius:20px;
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(12px);
-    box-shadow:0px 8px 25px rgba(0,0,0,0.3);
-    margin-bottom:20px;
-    }
-
     </style>
     """, unsafe_allow_html=True)
-
-# ---------------- LIGHT MODE ----------------
 
 else:
 
     st.markdown("""
     <style>
-
     .stApp{
     background:#f5f7fb;
     color:#111111;
     }
-
-    section[data-testid="stSidebar"]{
-    background:#ffffff;
-    color:#111111;
-    }
-
-    h1,h2,h3,h4,h5,h6,p,span,label,div{
-    color:#111111 !important;
-    }
-
-    textarea,.stTextInput input{
-    background:#ffffff!important;
-    color:#111111!important;
-    border:1px solid #ddd;
-    }
-
-    .card{
-    padding:25px;
-    border-radius:20px;
-    background:white;
-    box-shadow:0px 8px 25px rgba(0,0,0,0.1);
-    margin-bottom:20px;
-    }
-
     </style>
     """, unsafe_allow_html=True)
 
-# ---------------- COMMON BUTTON STYLE ----------------
-
-st.markdown("""
-<style>
-
-h1{
-text-align:center;
-font-size:40px;
-font-weight:800;
-}
-
-.stButton>button{
-background:linear-gradient(135deg,#00c6ff,#0072ff);
-color:white;
-border-radius:12px;
-border:none;
-padding:10px 25px;
-font-weight:600;
-transition:0.3s;
-}
-
-.stButton>button:hover{
-background:linear-gradient(135deg,#ff7e5f,#feb47b);
-transform:scale(1.05);
-}
-
-</style>
-""", unsafe_allow_html=True)
-
 # =====================================================
-# PAGE 1 : MAIN REVIEW ANALYZER
+# PAGE 1
 # =====================================================
 
 if page == "📊 Review Analyzer":
 
     st.title("🤖 AI Product Review Intelligence Dashboard")
     st.caption("Advanced NLP-powered review analytics platform")
-    st.divider()
 
-# ---------------- TEXT SUMMARIZATION ----------------
+# ---------------- SUMMARIZER ----------------
 
     def summarize_text(text, num_sentences=3):
 
@@ -167,7 +187,7 @@ if page == "📊 Review Analyzer":
         for sentence in sentences:
             for word in word_tokenize(sentence.lower()):
                 if word in freq:
-                    sentence_scores[sentence] = sentence_scores.get(sentence,0) + freq[word]
+                    sentence_scores[sentence] = sentence_scores.get(sentence,0)+freq[word]
 
         summary_sentences = heapq.nlargest(
             num_sentences,
@@ -177,99 +197,37 @@ if page == "📊 Review Analyzer":
 
         return " ".join(summary_sentences)
 
-# ---------------- KEY POINT EXTRACTION ----------------
-
-    def extract_key_points(text):
-
-        sentences = sent_tokenize(text)
-
-        positive_points = set()
-        negative_points = set()
-        suggestions = set()
-
-        for sentence in sentences:
-
-            score = sia.polarity_scores(sentence)['compound']
-            clean_sentence = sentence.strip()
-
-            if len(clean_sentence) < 20:
-                continue
-
-            if score > 0.5:
-                positive_points.add(clean_sentence)
-
-            elif score < -0.5:
-                negative_points.add(clean_sentence)
-
-            if any(word in clean_sentence.lower() for word in
-                   ["should", "improve", "could", "needs", "better", "recommend", "wish"]):
-                suggestions.add(clean_sentence)
-
-        return list(positive_points), list(negative_points), list(suggestions)
-
 # ---------------- TEXT ANALYZER ----------------
 
     st.header("🧠 Text Sentiment Analyzer")
 
     text = st.text_area("Enter paragraph here")
 
-    def highlight_text(text):
-
-        words = text.split()
-        highlighted = ""
-
-        for word in words:
-
-            score = sia.polarity_scores(word)['compound']
-
-            if score > 0:
-                highlighted += f"<span style='color:#00ff9d;font-weight:600'>{word}</span> "
-
-            elif score < 0:
-                highlighted += f"<span style='color:#ff4b4b;font-weight:600'>{word}</span> "
-
-            else:
-                highlighted += word + " "
-
-        return highlighted
-
     if st.button("Analyze Text") and text:
 
         score = sia.polarity_scores(text)
 
-        col1, col2 = st.columns(2)
+        st.subheader("Sentiment Score")
+        st.json(score)
 
-        with col1:
+        if score['compound'] >= 0.05:
+            st.success("😊 Positive Sentiment")
 
-            st.subheader("📊 Sentiment Score")
-            st.json(score)
+        elif score['compound'] <= -0.05:
+            st.error("😡 Negative Sentiment")
 
-            if score['compound'] > 0:
-                st.success("😊 Positive Sentiment")
+        else:
+            st.info("😐 Neutral Sentiment")
 
-            elif score['compound'] < 0:
-                st.error("😡 Negative Sentiment")
+        if len(text) > 50:
+            summary = summarize_text(text)
 
-            else:
-                st.info("😐 Neutral Sentiment")
+            st.subheader("📝 Summary")
+            st.write(summary)
 
-        with col2:
+# ---------------- REVIEW ANALYZER ----------------
 
-            if len(text) > 50:
-
-                summary = summarize_text(text)
-
-                st.subheader("📝 Summary")
-                st.write(summary)
-
-        st.subheader("✨ Highlighted Sentiment Words")
-        st.markdown(highlight_text(text), unsafe_allow_html=True)
-
-# ---------------- WEBSITE REVIEW ANALYZER ----------------
-
-    # ---------------- WEBSITE REVIEW ANALYZER ----------------
-
-    st.header("🌐 Website Review Analyzer")
+    st.header("🌐 Website / Amazon Review Analyzer")
 
     url = st.text_input("Paste Product / Website URL")
 
@@ -281,157 +239,132 @@ if page == "📊 Review Analyzer":
 
                 try:
 
-                    headers = {
-                        "User-Agent": "Mozilla/5.0"
-                    }
-
-                    response = requests.get(url, headers=headers)
-                    soup = BeautifulSoup(response.text, "html.parser")
-
-                    # ⭐ BONUS BIG UPGRADE — smarter review scraping
-                    review_elements = soup.find_all(
-                        ["p", "span", "div"],
-                        class_=["review", "comment", "content", "text", "description"]
-                    )
-
-                    paragraph_reviews = soup.find_all("p")
-
                     reviews = []
 
-                    # Collect reviews from upgraded selectors
-                    for r in review_elements:
-                        text = r.get_text().strip()
-                        if len(text) > 30:
-                            reviews.append(text)
+                    if "amazon" in url:
 
-                    # Fallback to paragraph scraping
-                    for r in paragraph_reviews:
-                        text = r.get_text().strip()
-                        if len(text) > 30:
-                            reviews.append(text)
+                        reviews = scrape_amazon_reviews(url)
 
-                    # Remove duplicates
-                    unique_reviews = list(set(reviews))
+                    else:
 
-                    positive_count = 0
-                    negative_count = 0
+                        headers = {"User-Agent":"Mozilla/5.0"}
 
-                    all_positive_points = []
-                    all_negative_points = []
-                    all_suggestions = []
+                        response = requests.get(url,headers=headers)
+                        soup = BeautifulSoup(response.text,"html.parser")
 
-                    for review_text in unique_reviews[:40]:
+                        for r in soup.find_all("p"):
 
-                        score = sia.polarity_scores(review_text)
+                            text = r.get_text().strip()
 
-                        if score['compound'] > 0:
-                            positive_count += 1
+                            if len(text) > 30:
+                                reviews.append(text)
 
-                        elif score['compound'] < 0:
-                            negative_count += 1
+                    reviews = list(set(reviews))
 
-                        pos, neg, sug = extract_key_points(review_text)
+                    positive_reviews = []
+                    negative_reviews = []
 
-                        all_positive_points += pos
-                        all_negative_points += neg
-                        all_suggestions += sug
+                    for review in reviews:
 
-                    # Remove duplicate insights
-                    all_positive_points = list(set(all_positive_points))
-                    all_negative_points = list(set(all_negative_points))
-                    all_suggestions = list(set(all_suggestions))
+                        score = sia.polarity_scores(review)
+
+                        if score['compound'] >= 0.05:
+                            positive_reviews.append(review)
+
+                        elif score['compound'] <= -0.05:
+                            negative_reviews.append(review)
+
+                    positive_count = len(positive_reviews)
+                    negative_count = len(negative_reviews)
 
                     st.subheader("📊 Sentiment Dashboard")
 
-                    m1, m2 = st.columns(2)
+                    m1,m2 = st.columns(2)
 
                     with m1:
-                        st.metric("🟢 Positive Reviews", positive_count)
+                        st.metric("🟢 Positive Reviews",positive_count)
 
                     with m2:
-                        st.metric("🔴 Negative Reviews", negative_count)
+                        st.metric("🔴 Negative Reviews",negative_count)
 
                     data = pd.DataFrame({
-                        "Sentiment": ["Positive", "Negative"],
-                        "Count": [positive_count, negative_count]
+                        "Sentiment":["Positive","Negative"],
+                        "Count":[positive_count,negative_count]
                     })
 
                     pie = px.pie(
                         data,
                         names="Sentiment",
                         values="Count",
-                        hole=0.45,
-                        title="Review Sentiment Distribution"
+                        hole=0.45
                     )
 
-                    st.plotly_chart(pie, use_container_width=True)
+                    st.plotly_chart(pie,use_container_width=True)
 
                     bar = px.bar(
                         data,
                         x="Sentiment",
                         y="Count",
-                        color="Sentiment",
-                        title="Sentiment Comparison"
+                        color="Sentiment"
                     )
 
-                    st.plotly_chart(bar, use_container_width=True)
+                    st.plotly_chart(bar,use_container_width=True)
 
-                    col1, col2 = st.columns(2)
+# ---------------- SHOW REVIEWS ----------------
+
+                    st.divider()
+
+                    col1,col2 = st.columns(2)
 
                     with col1:
 
-                        st.subheader("🟢 Positive Insights")
+                        st.subheader("🟢 Positive Reviews")
 
-                        for point in all_positive_points[:5]:
-                            st.success(point)
+                        if positive_reviews:
+                            for review in positive_reviews[:10]:
+                                st.success(review)
+                        else:
+                            st.write("No positive reviews found")
 
                     with col2:
 
-                        st.subheader("🔴 Negative Insights")
+                        st.subheader("🔴 Negative Reviews")
 
-                        for point in all_negative_points[:5]:
-                            st.error(point)
-
-                    st.subheader("💡 Suggestions")
-
-                    for suggestion in all_suggestions[:5]:
-                        st.info(suggestion)
+                        if negative_reviews:
+                            for review in negative_reviews[:10]:
+                                st.error(review)
+                        else:
+                            st.write("No negative reviews found")
 
                 except:
-                    st.error("Website blocked scraping or invalid URL.")
+
+                    st.error("Website blocked scraping or invalid URL")
 
 # =====================================================
-# PAGE 2 : ABOUT
+# ABOUT PAGE
 # =====================================================
 
 elif page == "👨‍💻 About":
 
     st.title("👨‍💻 About the Developer")
 
-    col1, col2 = st.columns([1,2])
+    st.markdown("""
 
-    with col1:
-        st.image("assets/profile.jpeg", width=220)
+## Noob Nimisha
 
-    with col2:
+AI / ML Developer  
 
-        st.markdown("""
-        ## Noob Nimisha
+Creator of the **AI Product Review Intelligence Dashboard**
 
-        **AI / ML Developer**
+### Skills
 
-        Creator of the **AI Product Review Intelligence Dashboard**
+• Python  
+• NLP  
+• Data Visualization  
+• Machine Learning  
 
-        ### Skills
-        • Playing GAMES like NOOB                                                              
-        • Can study until 2 AM                          
-        • Python  
-        • NLP  
-        • Data Visualization  
-        • Machine Learning                
-                                                       
+### GitHub
 
-        ### Links
-        GitHub: https://github.com/Nimisha-Anand                                 
-        Linkedin: idk she didnt GAVE
-        """)
+https://github.com/Nimisha-Anand
+
+""")
