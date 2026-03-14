@@ -1,3 +1,10 @@
-
-nltk
 streamlit
+nltk
+requests
+beautifulsoup4
+plotly
+pandas
+selenium
+webdriver-manager
+lxml
+html5lib
