@@ -7,3 +7,4 @@ pandas
 selenium
 webdriver-manager
 undetected-chromedriver
+### paste this in terminal "pip install -r requirements.txt"
