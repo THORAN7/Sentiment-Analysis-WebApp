@@ -495,12 +495,13 @@ Creator of the **AI Product Review Intelligence Dashboard**
 
 ### Skills
 
+• NOOB 
 • Python  
 • NLP  
 • Data Visualization  
 • Machine Learning  
 
-### GitHub
+### GitHub 
 
 https://github.com/Nimisha-Anand
 """)
