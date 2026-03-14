@@ -152,13 +152,86 @@ else:
 
     st.markdown("""
     <style>
+
+    /* MAIN BACKGROUND */
+
     .stApp{
-    background:#f5f7fb;
-    color:#111111;
+        background: linear-gradient(135deg,#ffffff,#f3f6fb,#eef2ff);
+        color:#111111;
     }
+
+    /* SIDEBAR */
+
+    section[data-testid="stSidebar"]{
+        background: linear-gradient(180deg,#ffffff,#eef2ff);
+        color:#111111;
+    }
+
+    /* HEADINGS */
+
+    h1, h2, h3, h4, h5, h6{
+        color:#0f172a !important;
+    }
+
+    /* TEXT */
+
+    p, span, label, div{
+        color:#111111;
+    }
+
+    /* TEXT INPUT */
+
+    textarea, input{
+        background-color:white !important;
+        color:#111111 !important;
+        border-radius:10px !important;
+        border:1px solid #dbeafe !important;
+    }
+
+    /* METRIC BOX */
+
+    div[data-testid="metric-container"]{
+        background:white;
+        border-radius:12px;
+        padding:10px;
+        border:1px solid #e2e8f0;
+        box-shadow:0px 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* EXPANDER */
+
+    details{
+        background:white;
+        border-radius:10px;
+        padding:10px;
+        border:1px solid #e5e7eb;
+    }
+
+    /* BUTTON */
+
+    .stButton>button{
+        background: linear-gradient(90deg,#3b82f6,#60a5fa);
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:10px 20px;
+        font-weight:bold;
+        transition:0.3s;
+    }
+
+    .stButton>button:hover{
+        background: linear-gradient(90deg,#2563eb,#3b82f6);
+        transform:scale(1.05);
+    }
+
+    /* SUCCESS / ERROR BOX */
+
+    .stAlert{
+        border-radius:10px;
+    }
+
     </style>
     """, unsafe_allow_html=True)
-
 # =====================================================
 # PAGE 1
 # =====================================================
