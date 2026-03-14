@@ -6,5 +6,4 @@ plotly
 pandas
 selenium
 webdriver-manager
-lxml
-html5lib
+undetected-chromedriver
