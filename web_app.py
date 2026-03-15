@@ -488,7 +488,7 @@ if page == "📊 Review Analyzer":
 elif page == "👨‍💻 About":
     st.title("👨‍💻 About the Developer")
     st.markdown("""
-## Noob Nimisha
+## Noob 
 
 AI / ML Developer  
 Creator of the **AI Product Review Intelligence Dashboard**
@@ -503,5 +503,5 @@ Creator of the **AI Product Review Intelligence Dashboard**
 
 ### GitHub 
 
-https://github.com/Nimisha-Anand
+https://github.com/Your_Name
 """)
