@@ -503,5 +503,5 @@ Creator of the **AI Product Review Intelligence Dashboard**
 
 ### GitHub 
 
-https://github.com/Your_Name
+https:Paste Your GitHub link noob
 """)
