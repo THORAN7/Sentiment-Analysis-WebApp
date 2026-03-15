@@ -274,11 +274,11 @@ if theme:
     st.markdown("""
     <style>
     .stApp{
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    background: linear-gradient(135deg, #0f172a, #1e1b4b, #4c1d95);
     color:white;
     }
     section[data-testid="stSidebar"]{
-    background:linear-gradient(180deg,#1f2937,#111827);
+    background:linear-gradient(180deg, #0f172a, #2d1b69);
     color:white;
     }
     </style>
@@ -287,11 +287,11 @@ else:
     st.markdown("""
     <style>
     .stApp{
-        background: linear-gradient(135deg,#ffffff,#f3f6fb,#eef2ff);
+        background: linear-gradient(135deg, #dbeafe, #fbcfe8, #f3e8ff);
         color:#111111;
     }
     section[data-testid="stSidebar"]{
-        background: linear-gradient(180deg,#ffffff,#eef2ff);
+        background: linear-gradient(180deg, #eff6ff, #fdf2f8);
         color:#111111;
     }
     h1, h2, h3, h4, h5, h6{
@@ -495,7 +495,7 @@ Creator of the **AI Product Review Intelligence Dashboard**
 
 ### Skills
 
-• NOOB 
+• NOOB       
 • Python  
 • NLP  
 • Data Visualization  
