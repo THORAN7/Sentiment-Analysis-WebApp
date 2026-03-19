@@ -273,67 +273,320 @@ theme = st.sidebar.toggle("🌙 Dark Mode", value=True)
 if theme:
     st.markdown("""
     <style>
-    .stApp{
-    background: linear-gradient(135deg, #0f172a, #1e1b4b, #4c1d95);
-    color:white;
+    * {
+        transition: all 0.3s ease;
     }
+    
+    .stApp{
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4c1d95 100%);
+        color: white;
+        overflow-x: hidden;
+    }
+    
     section[data-testid="stSidebar"]{
-    background:linear-gradient(180deg, #0f172a, #2d1b69);
-    color:white;
+        background: linear-gradient(180deg, #0f172a 0%, #2d1b69 100%) !important;
+        backdrop-filter: blur(10px);
+        color: white;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #60a5fa !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
+    }
+    
+    p, span, div, label, .stMarkdown {
+        color: #e0e7ff !important;
+    }
+    
+    .stCaption, small {
+        color: #a5b4fc !important;
+    }
+    
+    .stTextInput > div > div > input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #e0e7ff !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border: 1px solid rgba(96, 165, 250, 0.5) !important;
+        box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2) !important;
+        color: white !important;
+    }
+    
+    textarea {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #e0e7ff !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    textarea:focus {
+        border: 1px solid rgba(96, 165, 250, 0.5) !important;
+        box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2) !important;
+        color: white !important;
+    }
+    
+    div[data-testid="metric-container"]{
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+        border-radius: 16px !important;
+        padding: 20px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    .stButton > button {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 24px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.6) !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
+    .stAlert {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    details {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05)) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    [data-testid="stRadio"] > label {
+        color: white !important;
+    }
+    
+    [data-testid="stRadio"] > div {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 10px !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 8px !important;
+    }
+    
+    .stDivider {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    [data-testid="stToggle"] {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 2px solid rgba(96, 165, 250, 0.3) !important;
+        border-radius: 20px !important;
+        padding: 4px !important;
+    }
+    
+    [data-testid="stToggle"] button {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+        border-radius: 16px !important;
     }
     </style>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
     <style>
+    * {
+        transition: all 0.3s ease;
+    }
+    
     .stApp{
-        background: linear-gradient(135deg, #dbeafe, #fbcfe8, #f3e8ff);
-        color:#111111;
+        background: linear-gradient(180deg, #fafbff 0%, #f5f0ff 25%, #fff5f9 50%, #f0f9ff 75%, #f5f0ff 100%);
+        color: #0f172a;
     }
+    
     section[data-testid="stSidebar"]{
-        background: linear-gradient(180deg, #eff6ff, #fdf2f8);
-        color:#111111;
+        background: linear-gradient(180deg, #eff6ff 0%, #fdf2f8 100%) !important;
+        backdrop-filter: blur(10px);
+        color: #0f172a;
     }
+    
     h1, h2, h3, h4, h5, h6{
-        color:#0f172a !important;
+        color: #1d4ed8 !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
     }
-    p, span, label, div{
-        color:#111111;
+    
+    p, span, label, div {
+        color: #0f172a !important;
     }
-    textarea, input{
-        background-color:white !important;
-        color:#111111 !important;
-        border-radius:10px !important;
-        border:1px solid #dbeafe !important;
+    
+    .stMarkdown > p {
+        color: #0f172a !important;
     }
+    
+    .st-ek {
+        background-color: rgba(59, 130, 246, 0.05) !important;
+    }
+    
+    .stCaption {
+        color: #1e40af !important;
+        font-weight: 500 !important;
+    }
+    
+    .stTextInput > div > div > input {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(59, 130, 246, 0.4) !important;
+        color: #0f172a !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border: 2px solid rgba(59, 130, 246, 0.8) !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+        background: rgba(240, 245, 255, 0.95) !important;
+    }
+    
+    .stTextInput > div > div > input::placeholder {
+        color: rgba(29, 78, 216, 0.5) !important;
+    }
+    
+    textarea {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid rgba(59, 130, 246, 0.4) !important;
+        color: #0f172a !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    textarea:focus {
+        border: 2px solid rgba(59, 130, 246, 0.8) !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+        background: rgba(240, 245, 255, 0.95) !important;
+    }
+    
+    textarea::placeholder {
+        color: rgba(29, 78, 216, 0.5) !important;
+    }
+    
     div[data-testid="metric-container"]{
-        background:white;
-        border-radius:12px;
-        padding:10px;
-        border:1px solid #e2e8f0;
-        box-shadow:0px 2px 8px rgba(0,0,0,0.05);
+        background: linear-gradient(135deg, rgba(240, 245, 255, 0.8), rgba(255, 255, 255, 0.9));
+        border-radius: 16px !important;
+        padding: 20px !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.12) !important;
     }
-    details{
-        background:white;
-        border-radius:10px;
-        padding:10px;
-        border:1px solid #e5e7eb;
+    
+    [data-testid="metric-container"] > label {
+        color: #1d4ed8 !important;
+        font-weight: 600 !important;
     }
-    .stButton>button{
-        background: linear-gradient(90deg,#3b82f6,#60a5fa);
-        color:white;
-        border:none;
-        border-radius:10px;
-        padding:10px 20px;
-        font-weight:bold;
-        transition:0.3s;
+    
+    [data-testid="metric-container"] > div > div {
+        color: #1e40af !important;
     }
-    .stButton>button:hover{
-        background: linear-gradient(90deg,#2563eb,#3b82f6);
-        transform:scale(1.05);
+    
+    .stButton > button {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 24px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3) !important;
+        transition: all 0.3s ease !important;
     }
-    .stAlert{
-        border-radius:10px;
+    
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 24px rgba(59, 130, 246, 0.5) !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
+    .stAlert {
+        background: linear-gradient(135deg, rgba(240, 245, 255, 0.85), rgba(255, 255, 255, 0.95)) !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1) !important;
+        color: #0f172a !important;
+    }
+    
+    details {
+        background: linear-gradient(135deg, rgba(240, 245, 255, 0.8), rgba(255, 255, 255, 0.9)) !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1) !important;
+        color: #0f172a !important;
+    }
+    
+    details > summary {
+        color: #1d4ed8 !important;
+        font-weight: 600 !important;
+    }
+    
+    [data-testid="stRadio"] > label {
+        color: #1d4ed8 !important;
+        font-weight: 600 !important;
+    }
+    
+    [data-testid="stRadio"] > div {
+        background: rgba(240, 245, 255, 0.8) !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 8px !important;
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08) !important;
+    }
+    
+    .stDivider {
+        border-color: rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    [data-testid="stToggle"] {
+        background: rgba(240, 245, 255, 0.9) !important;
+        border: 2px solid rgba(59, 130, 246, 0.5) !important;
+        border-radius: 20px !important;
+        padding: 4px !important;
+    }
+    
+    [data-testid="stToggle"] button {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+        border-radius: 16px !important;
+    }
+    
+    .stHeading {
+        color: #1d4ed8 !important;
+    }
+    
+    .stSubheader {
+        color: #1e40af !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -489,19 +742,14 @@ elif page == "👨‍💻 About":
     st.title("👨‍💻 About the Developer")
     st.markdown("""
 ## Noob 
-
 AI / ML Developer  
 Creator of the **AI Product Review Intelligence Dashboard**
-
 ### Skills
-
 • NOOB       
 • Python  
 • NLP  
 • Data Visualization  
 • Machine Learning  
-
 ### GitHub 
-
 https:Paste Your GitHub link noob
 """)
