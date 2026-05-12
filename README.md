@@ -1,19 +1,52 @@
-## OYE NOOB its just a sample 
+# Sentiment Analysis Web App
 
-# Sentiment Analysis Project
-
-This is a beginner sentiment analysis project built using Python and NLTK VADER.
+A Python-based sentiment analysis application that classifies text input as positive, negative, or neutral using NLTK VADER sentiment analysis.
 
 ## Features
-- Takes user input
-- Detects Positive, Negative, or Neutral sentiment
-- Runs in terminal
 
-## How to Run
-1. Install requirements
-2. Run app.py
+- Real-time sentiment analysis on user input
+- Classification into positive, negative, or neutral sentiments
+- Web-based interface powered by Streamlit
+- Terminal-based interface option
 
-## Run the Web App
+## Requirements
 
-1. pip install -r requirements.txt --(Its important download it before u run the code NOOB)
-2. streamlit run web_app.py --(To run this code u dummy)
+See `requirements.txt` for detailed dependencies.
+
+## Installation
+
+1. Clone or download this repository
+2. Install required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+### Web Application
+
+Run the Streamlit web app:
+
+```bash
+streamlit run web_app.py
+```
+
+### Terminal Application
+
+Run the terminal-based application:
+
+```bash
+python app.py
+```
+
+## Project Structure
+
+- `app.py` - Terminal-based sentiment analysis application
+- `web_app.py` - Streamlit web application
+- `requirements.txt` - Project dependencies
+
+## Technologies Used
+
+- Python
+- NLTK VADER Sentiment Analysis
+- Streamlit
