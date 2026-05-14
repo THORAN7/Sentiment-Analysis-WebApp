@@ -1017,5 +1017,5 @@ Key technologies:
 - Requests & BeautifulSoup
 - Selenium (optional)
 
-Repository / Contact: https://github.com/yourusername/your-repo
+Repository / Contact: https://github.com/THORAN7/Sentiment-Analysis-WebApp
 """)
