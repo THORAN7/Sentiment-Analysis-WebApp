@@ -67,7 +67,7 @@ pip install -r requirements.txt
 ### Streamlit Web Application
 
 ```bash
-streamlit run web_app.py
+streamlit run web.py
 ```
 
 ### Tkinter Desktop Application
