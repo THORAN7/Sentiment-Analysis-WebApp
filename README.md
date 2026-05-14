@@ -79,7 +79,7 @@ python app.py
 ## Project Structure
 
 - `app.py` — Tkinter desktop sentiment analysis app
-- `web_app.py` — Streamlit review and sentiment analysis dashboard
+- `web.py` — Streamlit review and sentiment analysis dashboard
 - `requirements.txt` — Python dependencies
 
 ## Technology Stack
