@@ -105,4 +105,4 @@ If you want to use this style on your GitHub profile README, update the placehol
 
 ## License
 
-Add a license here if you plan to publish the project publicly.
+Its free for Everyone to use and modify this project as needed. Please give credit to the original author if you use or adapt this code in your projects.
