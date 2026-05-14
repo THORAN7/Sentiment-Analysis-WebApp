@@ -1,19 +1,13 @@
 # Sentiment Analysis Web App
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=220&section=header&text=Sentiment%20Analysis%20Web%20App&fontSize=40&fontAlignY=35" alt="Project banner" />
-</p>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=220&section=header&text=Sentiment%20Analysis%20Web%20App&fontSize=40&fontAlignY=35" alt="Project banner" />
 
-<p align="center">
-  A professional Python-based sentiment analysis project that classifies text as positive, negative, or neutral using NLTK VADER.
-</p>
+> A professional Python-based sentiment analysis project that classifies text as positive, negative, or neutral using NLTK VADER.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
-  <img src="https://img.shields.io/badge/NLTK-154F8A?style=for-the-badge&logo=python&logoColor=white" alt="NLTK" />
-  <img src="https://img.shields.io/badge/BeautifulSoup-8A4182?style=for-the-badge&logo=python&logoColor=white" alt="BeautifulSoup" />
-</p>
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+<img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
+<img src="https://img.shields.io/badge/NLTK-154F8A?style=for-the-badge&logo=python&logoColor=white" alt="NLTK" />
+<img src="https://img.shields.io/badge/BeautifulSoup-8A4182?style=for-the-badge&logo=python&logoColor=white" alt="BeautifulSoup" />
 
 ## Overview
 
@@ -36,13 +30,9 @@ The project uses **NLTK VADER** for sentiment scoring and includes review collec
 
 > Replace these placeholders with your own screenshots for a truly professional GitHub profile or project page.
 
-<p align="center">
-  <img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Web+App+Screenshot+Here" alt="Web app screenshot placeholder" width="100%" />
-</p>
+<img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Web+App+Screenshot+Here" alt="Web app screenshot placeholder" width="100%" />
 
-<p align="center">
-  <img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Desktop+App+Screenshot+Here" alt="Desktop app screenshot placeholder" width="100%" />
-</p>
+<img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Desktop+App+Screenshot+Here" alt="Desktop app screenshot placeholder" width="100%" />
 
 ## Requirements
 
