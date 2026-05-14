@@ -34,15 +34,13 @@ The project uses **NLTK VADER** for sentiment scoring and includes review collec
 
 ## Screenshots
 
-> Replace these placeholders with your own screenshots for a truly professional GitHub profile or project page.
+### Web Application
 
-<p align="center">
-  <img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Web+App+Screenshot+Here" alt="Web app screenshot placeholder" width="100%" />
-</p>
+![Web App Screenshot](assets/screenshots/web.png)
 
-<p align="center">
-  <img src="https://via.placeholder.com/1200x650.png?text=Add+Your+Desktop+App+Screenshot+Here" alt="Desktop app screenshot placeholder" width="100%" />
-</p>
+### Desktop Application
+
+![Desktop App Screenshot](assets/screenshots/app.png)
 
 ## Requirements
 
