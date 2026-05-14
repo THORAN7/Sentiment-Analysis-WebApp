@@ -1006,16 +1006,30 @@ if page == "📊 Review Analyzer":
 elif page == "👨‍💻 About":
     st.title("👨‍💻 About")
     st.markdown("""
-This dashboard is a  project showcasing basic web scraping and NLP techniques (VADER sentiment, simple extractive summarization) combined with Streamlit for interactive visualization.
+### About this Dashboard
 
-If you'd like to improve or extend the project, please open an issue or PR on the repository and include reproducible steps.
+This project is a professional demonstration of practical Natural Language Processing (NLP) and web data collection techniques, packaged into an interactive Streamlit dashboard for exploration and analysis. It is intended as a reference implementation that you can extend or integrate into larger systems.
 
-Key technologies:
-- Python
-- Streamlit
-- NLTK (VADER)
-- Requests & BeautifulSoup
-- Selenium (optional)
+What this dashboard does
+- Collects user reviews and comments from web pages (Amazon product pages, Reddit posts, general websites) using multiple scraping strategies with fallbacks
+- Performs sentiment analysis using NLTK's VADER (rule-based, robust for social/media text)
+- Produces concise extractive summaries of long texts
+- Visualizes aggregated sentiment with interactive Plotly charts and easy-to-read metrics
 
-Repository / Contact: https://github.com/THORAN7/Sentiment-Analysis-WebApp
+
+Key technologies
+- Python 3.8+
+- Streamlit — interactive web UI
+- NLTK (VADER) — sentiment scoring
+- Requests & BeautifulSoup — HTML parsing
+- Plotly & Pandas — visualization and data handling
+
+
+Contact & links
+- Repository: https://github.com/THORAN7/Sentiment-Analysis-WebApp
+- LinkedIn: https://www.linkedin.com/in/thoran-o-b6921b3bb
+
+License
+- This repository does not include a license file. If you plan to publish or share broadly, consider adding an OSI-approved license (for example, MIT or Apache 2.0).
+
 """)
